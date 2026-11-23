@@ -1,0 +1,8 @@
+ADMIN_EMAIL="tello.m.m.t.95@gmail.com"
+ADMIN_PASS="11111111"
+
+SELLER_EMAIL="yaman@gmail.com"
+SELLER_PASS="11111111"
+
+CUSTOMER_EMAIL="khaled@gmail.com"
+CUSTOMER_PASS="11111111"
