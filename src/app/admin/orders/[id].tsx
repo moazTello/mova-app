@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { authImageSource } from '@/utils/media';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -115,7 +116,7 @@ export default function AdminOrderDetails() {
           <AppText variant="h3">{t('admin.receipt')}</AppText>
           {order.receipt_image ? (
             <Pressable onPress={() => setViewing(order.receipt_image)}>
-              <Image source={{ uri: order.receipt_image }} style={styles.receipt} resizeMode="cover" />
+              <Image source={authImageSource(order.receipt_image)} style={styles.receipt} resizeMode="cover" />
             </Pressable>
           ) : (
             <AppText variant="caption" color={Colors.textMuted}>

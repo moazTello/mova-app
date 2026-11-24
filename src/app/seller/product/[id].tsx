@@ -21,16 +21,12 @@ import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { KeyboardFooter, FOOTER_KEYBOARD_OFFSET } from "@/components/KeyboardFooter";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
 
 export default function EditProduct() {
   const { t } = useTranslation();
@@ -108,7 +104,14 @@ export default function EditProduct() {
       videoMaxDuration: 60,
       quality: 0.7,
     });
-    if (!result.canceled) addVideos.mutate([result.assets[0].uri], { onError });
+    if (result.canceled) return;
+
+    // السيرفر بيقبل لحد 20MB للفيديو، فمنوقف قبل ما يضيع وقت المستخدم بالرفع
+    const video = result.assets[0];
+    if (video.fileSize && video.fileSize > MAX_VIDEO_BYTES) {
+      return Alert.alert(t("productForm.videoTooLarge"));
+    }
+    addVideos.mutate([video.uri], { onError });
   };
   const onSave = () => {
     setErrors({});
@@ -135,13 +138,11 @@ export default function EditProduct() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.screen}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <View style={styles.screen}>
       <BackHeader title={t("productForm.editTitle")} />
 
-      <ScrollView
+      <KeyboardAwareScrollView
+        bottomOffset={FOOTER_KEYBOARD_OFFSET}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
@@ -243,9 +244,9 @@ export default function EditProduct() {
             />
           </View>
         </FormSection>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-      <View
+      <KeyboardFooter
         style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}
       >
         <AppButton
@@ -253,8 +254,8 @@ export default function EditProduct() {
           onPress={onSave}
           loading={update.isPending}
         />
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardFooter>
+    </View>
   );
 }
 

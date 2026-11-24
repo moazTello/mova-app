@@ -81,6 +81,7 @@ export default function AdminUsers() {
           keyExtractor={(u) => u.id}
           contentContainerStyle={styles.list}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           onRefresh={refetch}
           refreshing={isRefetching}
           onEndReached={() => hasNextPage && fetchNextPage()}

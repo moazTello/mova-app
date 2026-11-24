@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
 import { AppButton } from '@/components/AppButton';
@@ -56,7 +57,7 @@ export function ReviewModal({ productId, visible, existing, onClose }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView style={styles.backdrop} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.sheet}>
           <AppText variant="h3" center>

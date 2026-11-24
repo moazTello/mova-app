@@ -1,4 +1,5 @@
 import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { authImageSource } from '@/utils/media';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,7 +11,7 @@ export function ImageViewer({ uri, onClose }: Props) {
   return (
     <Modal visible={!!uri} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.backdrop}>
-        {uri && <Image source={{ uri }} style={styles.image} resizeMode="contain" />}
+        {uri && <Image source={authImageSource(uri)} style={styles.image} resizeMode="contain" />}
         <Pressable onPress={onClose} style={[styles.close, { top: insets.top + 12 }]} hitSlop={10}>
           <Ionicons name="close" size={26} color="#fff" />
         </Pressable>

@@ -16,16 +16,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { KeyboardFooter, FOOTER_KEYBOARD_OFFSET } from "@/components/KeyboardFooter";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function CheckoutAddress() {
   const { t, i18n } = useTranslation();
@@ -90,13 +83,11 @@ export default function CheckoutAddress() {
   const lang = i18n.language === "ar" ? "ar" : "en";
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: Colors.background }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <BackHeader title={t("checkout.title")} />
 
-      <ScrollView
+      <KeyboardAwareScrollView
+        bottomOffset={FOOTER_KEYBOARD_OFFSET}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
@@ -203,9 +194,9 @@ export default function CheckoutAddress() {
             </View>
           </View>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-      <View
+      <KeyboardFooter
         style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}
       >
         <AppButton
@@ -213,8 +204,8 @@ export default function CheckoutAddress() {
           onPress={onContinue}
           loading={loading}
         />
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardFooter>
+    </View>
   );
 }
 

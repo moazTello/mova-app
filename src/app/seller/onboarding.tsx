@@ -10,15 +10,8 @@ import { homeFor } from "@/utils/roleRoutes";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackHeader } from "@/components/BackHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -104,32 +97,11 @@ export default function SellerOnboarding() {
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   style={{ flex: 1, backgroundColor: Colors.background }}
-    //   behavior={Platform.OS === "ios" ? "padding" : undefined}
-    // >
-    //   <ScrollView
-    //     contentContainerStyle={[
-    //       styles.content,
-    //       { paddingTop: insets.top + Spacing.lg },
-    //     ]}
-    //     keyboardShouldPersistTaps="handled"
-    //   >
-    //     <View style={styles.header}>
-    //       <AppText variant="h2" center>
-    //         {t("shop.title")}
-    //       </AppText>
-    //       <AppText variant="caption" color={Colors.textMuted} center>
-    //         {t("shop.subtitle")}
-    //       </AppText>
-    //     </View>
- <KeyboardAvoidingView
-    style={{ flex: 1, backgroundColor: Colors.background }}
-    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-  >
+ <View style={{ flex: 1, backgroundColor: Colors.background }}>
     {isEdit && <BackHeader title={t('shop.editTitle')} />}
 
-    <ScrollView
+    <KeyboardAwareScrollView
+        bottomOffset={Spacing.xl}
       contentContainerStyle={[styles.content, { paddingTop: isEdit ? 0 : insets.top + Spacing.lg }]}
       keyboardShouldPersistTaps="handled"
     >
@@ -240,8 +212,8 @@ export default function SellerOnboarding() {
     </AppText>
   </Pressable>
 )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 

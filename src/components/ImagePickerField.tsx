@@ -1,4 +1,5 @@
 import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
+import { authImageSource } from '@/utils/media';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +34,7 @@ export function ImagePickerField({ label, uri, onChange, error }: Props) {
       </AppText>
       <Pressable onPress={pick} style={[styles.box, !!error && { borderColor: Colors.danger }]}>
         {uri ? (
-          <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+          <Image source={authImageSource(uri)} style={styles.image} resizeMode="cover" />
         ) : (
           <>
             <Ionicons name="id-card-outline" size={32} color={Colors.beige} />

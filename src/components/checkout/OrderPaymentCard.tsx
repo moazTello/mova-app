@@ -1,4 +1,5 @@
 import { Alert, Image, StyleSheet, View } from 'react-native';
+import { authImageSource } from '@/utils/media';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
@@ -63,7 +64,7 @@ export function OrderPaymentCard({ order }: { order: Order }) {
       </View>
 
       {!!order.receipt_image && (
-        <Image source={{ uri: order.receipt_image }} style={styles.receipt} resizeMode="cover" />
+        <Image source={authImageSource(order.receipt_image)} style={styles.receipt} resizeMode="cover" />
       )}
 
       {canUpload && (

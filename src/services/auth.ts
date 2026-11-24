@@ -1,4 +1,5 @@
 import { AuthResponse, User } from "@/types/user";
+import { isEmailIdentifier, normalizeSyrianPhone } from "@/utils/phone";
 import { api } from "./api";
 
 export type RegisterPayload = {
@@ -11,12 +12,17 @@ export type RegisterPayload = {
 };
 
 export const authService = {
-  login: async (email: string, password: string) => {
+  /** تسجيل الدخول بالإيميل أو برقم الموبايل */
+  login: async (identifier: string, password: string) => {
+    const value = identifier.trim();
+    const credentials = isEmailIdentifier(value)
+      ? { email: value.toLowerCase() }
+      : { phone_number: normalizeSyrianPhone(value) };
+
     const { data } = await api.post<AuthResponse>("/auth/login", {
-      email,
+      ...credentials,
       password,
     });
-    console.log(data)
     return data;
   },
 

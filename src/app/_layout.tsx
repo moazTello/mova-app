@@ -25,6 +25,7 @@ import { queryClient } from "@/services/queryClient";
 import { Ionicons } from "@expo/vector-icons";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundaryProps } from "expo-router";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 SplashScreen.preventAutoHideAsync();
 registerSessionGuard();
 // const queryClient = new QueryClient({
@@ -62,12 +63,14 @@ const direction = ready ? (i18n.language === 'ar' ? 'rtl' : 'ltr') : undefined;
 
   return (
     <QueryClientProvider client={queryClient}>
+    <KeyboardProvider>
     <View style={{ flex: 1, direction }}>
         {ready && <Stack screenOptions={{ headerShown: false }} />}
         {!splashDone && (
           <AnimatedSplash ready={ready} onFinish={() => setSplashDone(true)} />
         )}
       </View>
+    </KeyboardProvider>
     </QueryClientProvider>
   );
 }

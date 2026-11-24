@@ -1,13 +1,6 @@
 import { ReactNode } from 'react';
-import {
-  Image,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ImageBackground, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from './AppText';
 import { Colors, Spacing } from '@/constants/theme';
@@ -28,11 +21,8 @@ export function AuthScreen({ title, subtitle, children }: Props) {
       resizeMode="cover"
     >
       <View style={styles.panel}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
-          <ScrollView
+          <KeyboardAwareScrollView
+            bottomOffset={Spacing.xl}
             contentContainerStyle={[
               styles.content,
               { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg },
@@ -58,8 +48,7 @@ export function AuthScreen({ title, subtitle, children }: Props) {
             </View>
 
             {children}
-          </ScrollView>
-        </KeyboardAvoidingView>
+          </KeyboardAwareScrollView>
       </View>
     </ImageBackground>
   );

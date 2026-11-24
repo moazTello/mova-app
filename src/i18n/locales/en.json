@@ -16,6 +16,7 @@
     "login": "Login",
     "register": "Create account",
     "email": "Email",
+    "emailOrPhone": "Email or phone number",
     "password": "Password",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
@@ -264,7 +265,8 @@
     "videos": "Product video",
     "addVideo": "Add video",
     "videoCount": "{{count}} video(s)",
-    "videoHint": "A short clip showing the product (up to 1 minute)"
+    "videoHint": "A short clip showing the product (up to 20 MB)",
+    "videoTooLarge": "This video is larger than 20 MB. Choose a shorter or lower-quality clip."
   },
   "sellerOrders": {
     "title": "Orders",
