@@ -118,7 +118,7 @@ export const sellerService = {
   },
   orderItems: async () => {
     const { data } = await api.get("/seller/order-items");
-    return unwrapList<SellerOrderItem>(data, "order_items");
+    return unwrapList<SellerOrderItem>(data, "items");
   },
 
   updateItemStatus: async (
