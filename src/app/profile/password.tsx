@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AppInput } from '@/components/AppInput';
@@ -37,7 +38,8 @@ export default function ChangePassword() {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
+      bottomOffset={Spacing.xl}
       style={{ flex: 1, backgroundColor: Colors.background }}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
@@ -75,7 +77,7 @@ export default function ChangePassword() {
         disabled={!current || !password || !confirm}
         style={{ marginTop: Spacing.sm }}
       />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

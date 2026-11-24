@@ -1,4 +1,5 @@
 import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
+import { authImageSource } from '@/utils/media';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
@@ -72,7 +73,7 @@ export function PendingSellerCard({ seller, onViewImage }: Props) {
         {idImages.map((uri, i) =>
           uri ? (
             <Pressable key={i} style={styles.imageBox} onPress={() => onViewImage(uri)}>
-              <Image source={{ uri }} style={styles.image} />
+              <Image source={authImageSource(uri)} style={styles.image} />
             </Pressable>
           ) : (
             <View key={i} style={[styles.imageBox, styles.noImage]}>

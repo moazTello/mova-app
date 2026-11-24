@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
@@ -38,7 +39,11 @@ export default function AdminMarkup() {
       {isLoading ? (
         <ActivityIndicator color={Colors.primary} style={{ marginTop: Spacing.xl }} />
       ) : (
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <KeyboardAwareScrollView
+          bottomOffset={Spacing.xl}
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
           <AppText variant="h3">{t('admin.markupTitle')}</AppText>
           <AppText variant="caption" color={Colors.textMuted}>
             {t('admin.markupHint')}
@@ -75,7 +80,7 @@ export default function AdminMarkup() {
           </View>
 
           <AppButton title={t('admin.save')} onPress={onSave} loading={update.isPending} disabled={!changed} />
-        </ScrollView>
+        </KeyboardAwareScrollView>
       )}
     </View>
   );

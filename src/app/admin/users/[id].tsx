@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ActivityIndicator, Alert, RefreshControl, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, RefreshControl, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +76,8 @@ export default function AdminUserDetails() {
     <View style={styles.screen}>
       <BackHeader title={user.seller_info?.shop_name ?? user.name} />
 
-      <ScrollView
+      <KeyboardAwareScrollView
+        bottomOffset={Spacing.xl}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
@@ -165,7 +167,7 @@ export default function AdminUserDetails() {
             )}
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 }

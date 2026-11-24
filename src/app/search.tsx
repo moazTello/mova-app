@@ -85,6 +85,7 @@ export default function Search() {
             columnWrapperStyle={{ gap: GAP }}
             contentContainerStyle={styles.list}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             ListHeaderComponent={
               results.data?.length ? (
                 <AppText variant="caption" color={Colors.textMuted}>
@@ -104,7 +105,7 @@ export default function Search() {
         )
       ) : (
         // قبل البحث
-        <ScrollView contentContainerStyle={styles.list} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={styles.list} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           {recent.items.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ActionSheetIOS, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActionSheetIOS, Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -123,13 +124,12 @@ export default function EditProfile() {
     ]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: Colors.background }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <BackHeader title={t('profile.edit')} />
 
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        bottomOffset={Spacing.xl}
+        contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {/* الصورة */}
         <Pressable onPress={onPhotoPress} disabled={photoBusy} style={styles.avatarWrap}>
           <View style={{ opacity: photoBusy ? 0.5 : 1 }}>
@@ -173,8 +173,8 @@ export default function EditProfile() {
           onPress={onDelete}
           style={{ marginTop: Spacing.xl }}
         />
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 

@@ -1,12 +1,7 @@
 import { Colors, Spacing } from "@/constants/theme";
 import { ReactNode } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleProp,
-  View,
-  ViewStyle,
-} from "react-native";
+import { RefreshControl, StyleProp, View, ViewStyle } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
@@ -43,10 +38,12 @@ export function Screen({
   }
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={{ flex: 1, backgroundColor: Colors.background }}
       contentContainerStyle={style}
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={Spacing.lg}
       refreshControl={
         onRefresh ? (
           <RefreshControl
@@ -58,6 +55,6 @@ export function Screen({
       }
     >
       {children}
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

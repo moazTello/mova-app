@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
+import { KeyboardFooter, FOOTER_KEYBOARD_OFFSET } from '@/components/KeyboardFooter';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -58,13 +60,11 @@ export default function NewProduct() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: Colors.background }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <BackHeader title={t('productForm.newTitle')} />
 
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        bottomOffset={FOOTER_KEYBOARD_OFFSET} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <FormSection title={t('productForm.images')}>
           <ImagesPicker
             images={images}
@@ -105,12 +105,12 @@ export default function NewProduct() {
             onRemove={(i) => setOptions((prev) => prev.filter((_, idx) => idx !== i))}
           />
         </FormSection>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-      <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
+      <KeyboardFooter style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
         <AppButton title={t('productForm.save')} onPress={onSave} loading={create.isPending} />
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardFooter>
+    </View>
   );
 }
 

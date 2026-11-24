@@ -17,7 +17,7 @@ export default function Login() {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === "ar";
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const setSession = useAuthStore((s) => s.setSession);
@@ -28,7 +28,7 @@ export default function Login() {
   setErrors({});
   setLoading(true);
   try {
-    const res = await authService.login(email, password);
+    const res = await authService.login(identifier, password);
     await setSession(res.token, res.user, remember);
 
     // الـ login بيرجع مستخدم مختصر بدون seller_info، فمنجيب الكامل من /profile
@@ -60,14 +60,17 @@ export default function Login() {
     >
       <View style={styles.form}>
         <AppInput
-          icon="mail-outline"
-          placeholder={t("auth.email")}
-          value={email}
-          onChangeText={setEmail}
+          icon="person-outline"
+          placeholder={t("auth.emailOrPhone")}
+          value={identifier}
+          onChangeText={setIdentifier}
           keyboardType="email-address"
           autoCapitalize="none"
-          autoComplete="email"
-          error={errors.email}
+          autoCorrect={false}
+          autoComplete="username"
+          textContentType="username"
+          returnKeyType="next"
+          error={errors.login ?? errors.email ?? errors.phone_number}
         />
         <AppInput
           icon="lock-closed-outline"
