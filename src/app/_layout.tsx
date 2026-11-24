@@ -26,6 +26,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundaryProps } from "expo-router";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { StatusBar } from "expo-status-bar";
 SplashScreen.preventAutoHideAsync();
 registerSessionGuard();
 // const queryClient = new QueryClient({
@@ -69,6 +70,7 @@ const direction = ready ? (i18n.language === 'ar' ? 'rtl' : 'ltr') : undefined;
         {!splashDone && (
           <AnimatedSplash ready={ready} onFinish={() => setSplashDone(true)} />
         )}
+        <StatusBar style={splashDone ? "dark" : "light"} />
       </View>
     </KeyboardProvider>
     </QueryClientProvider>
@@ -89,6 +91,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
       }}
     >
       <Ionicons name="alert-circle-outline" size={64} color={Colors.beige} />
+      <StatusBar style="dark" />
       <AppText variant="h3" center>
         {i18n.t("errors.generic")}
       </AppText>

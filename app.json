@@ -12,7 +12,10 @@
       "bundleIdentifier": "com.mova.app",
       "supportsTablet": false,
       "infoPlist": {
-        "CFBundleLocalizations": ["ar", "en"]
+        "CFBundleLocalizations": [
+          "ar",
+          "en"
+        ]
       }
     },
     "android": {
@@ -48,8 +51,14 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["ar", "en"],
-            "android": ["ar", "en"]
+            "ios": [
+              "ar",
+              "en"
+            ],
+            "android": [
+              "ar",
+              "en"
+            ]
           }
         }
       ],
@@ -62,7 +71,8 @@
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,

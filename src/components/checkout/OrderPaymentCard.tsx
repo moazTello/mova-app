@@ -15,7 +15,7 @@ export function OrderPaymentCard({ order }: { order: Order }) {
   const { t } = useTranslation();
   const upload = useUploadReceipt();
   const status = orderStatusLabel(order);
-  const canUpload = order.receipt_status !== 'approved';
+  const canUpload = order.status === 'pending_payment';
 
   const pickAndUpload = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
