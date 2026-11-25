@@ -12,6 +12,8 @@ import {
   useUnreadCount,
 } from '@/hooks/useNotifications';
 import { notificationLink } from '@/utils/notification';
+import { useAuthStore } from '@/store/authStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppNotification } from '@/types/notification';
 import { Colors, Spacing } from '@/constants/theme';
 
@@ -22,10 +24,12 @@ export default function Notifications() {
   const markRead = useMarkRead();
   const markAll = useMarkAllRead();
   const remove = useDeleteNotification();
+  const role = useAuthStore((s) => s.user?.role);
+  const insets = useSafeAreaInsets();
 
   const onPress = (n: AppNotification) => {
     if (!n.read_at) markRead.mutate(n.id);
-    const link = notificationLink(n);
+    const link = notificationLink(n, role);
     if (link) router.push(link);
   };
 
@@ -53,7 +57,7 @@ export default function Notifications() {
         <FlatList
           data={data}
           keyExtractor={(n) => n.id}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + Spacing.lg }]}
           onRefresh={refetch}
           refreshing={isRefetching}
           renderItem={({ item }) => (

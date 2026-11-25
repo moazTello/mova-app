@@ -15,7 +15,9 @@ import { useAuthStore } from '@/store/authStore';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { PhoneInput } from '@/components/PhoneInput';
+import { useBottomPad } from '@/hooks/useBottomPad';
 export default function EditProfile() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const refreshUser = useAuthStore((s) => s.refreshUser);
@@ -129,7 +131,7 @@ export default function EditProfile() {
 
       <KeyboardAwareScrollView
         bottomOffset={Spacing.xl}
-        contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        contentContainerStyle={[styles.content, bottomPad]} keyboardShouldPersistTaps="handled">
         {/* الصورة */}
         <Pressable onPress={onPhotoPress} disabled={photoBusy} style={styles.avatarWrap}>
           <View style={{ opacity: photoBusy ? 0.5 : 1 }}>

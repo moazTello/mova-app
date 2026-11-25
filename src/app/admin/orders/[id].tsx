@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { authImageSource } from '@/utils/media';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { authImageSource } from '@/utils/media';
 import { AppText } from '@/components/AppText';
 import { AppButton } from '@/components/AppButton';
 import { BackHeader } from '@/components/BackHeader';
+import { ErrorState } from '@/components/ErrorState';
 import { ImageViewer } from '@/components/ImageViewer';
+import { DeliveryProofs } from '@/components/orders/DeliveryProofs';
 import { useAdminCancelOrder, useAdminOrder, useMarkDelivered, useReviewReceipt } from '@/hooks/useAdmin';
 import { orderCustomer } from '@/types/admin';
 import { OrderItem } from '@/types/order';
 import { formatPrice } from '@/utils/product';
-import { formatDate, isCancelled, orderStatusLabel, shortId } from '@/utils/order';
+import { awaitsDeliveryConfirm, awaitsReceiptReview, formatDate, isCancelled, isPaid, orderStatusLabel, shortId } from '@/utils/order';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 
@@ -28,16 +31,37 @@ function Line({ icon, text }: { icon: keyof typeof Ionicons.glyphMap; text?: str
   );
 }
 
+function Notice({ icon, text, color }: { icon: keyof typeof Ionicons.glyphMap; text: string; color: string }) {
+  return (
+    <View style={[styles.notice, { borderColor: color }]}>
+      <Ionicons name={icon} size={18} color={color} />
+      <AppText variant="caption" color={color} style={{ flex: 1 }}>
+        {text}
+      </AppText>
+    </View>
+  );
+}
+
 export default function AdminOrderDetails() {
   const { t, i18n } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data: order, isLoading, refetch, isRefetching } = useAdminOrder(id);
+  const { data: order, isLoading, isError, error, refetch, isRefetching } = useAdminOrder(id);
   const review = useReviewReceipt(id);
   const deliver = useMarkDelivered(id);
   const cancel = useAdminCancelOrder(id);
   const [viewing, setViewing] = useState<string | null>(null);
 
   const onError = (e: unknown) => Alert.alert(parseApiError(e).message);
+
+  if (isError) {
+    return (
+      <View style={styles.screen}>
+        <BackHeader title={t('orders.details')} />
+        <ErrorState error={error} onRetry={refetch} />
+      </View>
+    );
+  }
 
   if (isLoading || !order) {
     return (
@@ -51,8 +75,10 @@ export default function AdminOrderDetails() {
   const status = orderStatusLabel(order);
   const customer = orderCustomer(order);
   const cancelled = isCancelled(order.status);
-  const paid = order.receipt_status === 'approved';
-  const canReview = !cancelled && order.receipt_status === 'pending';
+  const paid = isPaid(order);
+  const canReview = awaitsReceiptReview(order);
+  const anyDelivered = order.items.some((i) => i.status === 'delivered');
+  const canCancel = !cancelled && order.status !== 'delivered' && !anyDelivered;
 
   const onReview = (s: 'approved' | 'rejected') =>
     Alert.alert(
@@ -84,14 +110,49 @@ export default function AdminOrderDetails() {
 
   const itemLabel = (s: string) => (i18n.exists(`itemStatus.${s}`) ? t(`itemStatus.${s}`) : s);
 
+  /** شو لازم يظهر جنب/تحت كل منتج حسب حالته */
+  const renderItemAction = (item: OrderItem) => {
+    if (!paid || cancelled) return null;
+    const hasProof = (item.delivery_proofs?.length ?? 0) > 0;
+
+    switch (item.status) {
+      case 'pending':
+      case 'in_progress':
+        return (
+          <AppText variant="small" color={Colors.wood}>
+            {t('admin.waitingSeller')}
+          </AppText>
+        );
+      case 'ready':
+        return hasProof ? (
+          <AppButton
+            title={t('admin.markDelivered')}
+            icon="checkmark-done"
+            onPress={() => onDeliver(item)}
+            loading={deliver.isPending && deliver.variables === item.id}
+            disabled={deliver.isPending}
+            style={styles.deliverBtn}
+          />
+        ) : (
+          <Notice icon="hourglass-outline" text={t('admin.waitingProof')} color={Colors.wood} />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <BackHeader title={`${t('orders.orderNo')} ${shortId(order.id)}`} />
 
       <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.lg }]}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={Colors.primary} />}
       >
+        {awaitsDeliveryConfirm(order) && (
+          <Notice icon="images-outline" text={t('admin.proofsHint')} color={Colors.primary} />
+        )}
+
         {/* المعلومات */}
         <View style={styles.card}>
           <View style={styles.headerRow}>
@@ -106,7 +167,11 @@ export default function AdminOrderDetails() {
           </View>
           <Line icon="person-outline" text={customer && `${t('admin.customer')}: ${customer.name}`} />
           <Line icon="call-outline" text={customer?.phone_number} />
-          <Line icon="storefront-outline" text={`${t('admin.shop')}: ${order.seller.shop_name ?? order.seller.name}`} />
+          <Line icon="mail-outline" text={customer?.email} />
+          <Line
+            icon="storefront-outline"
+            text={order.seller && `${t('admin.shop')}: ${order.seller.shop_name ?? order.seller.name}`}
+          />
           <Line icon="location-outline" text={order.delivery_address} />
           <Line icon="calendar-outline" text={formatDate(order.created_at)} />
         </View>
@@ -145,42 +210,32 @@ export default function AdminOrderDetails() {
           )}
         </View>
 
-        {/* المنتجات */}
+        {/* المنتجات + إثباتات التسليم */}
         <View style={styles.card}>
           <AppText variant="h3">{t('admin.items')}</AppText>
           {order.items.map((item) => (
             <View key={item.id} style={styles.item}>
-              <View style={{ flex: 1, gap: 2 }}>
-                <AppText weight="medium" numberOfLines={1}>
-                  {item.product.name} × {item.quantity}
-                </AppText>
-                <AppText variant="small" color={Colors.textMuted}>
-                  {formatPrice(item.subtotal)} · {itemLabel(item.status)}
-                </AppText>
+              <View style={styles.itemRow}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <AppText weight="medium" numberOfLines={1}>
+                    {item.product.name} × {item.quantity}
+                  </AppText>
+                  <AppText variant="small" color={Colors.textMuted}>
+                    {formatPrice(item.subtotal)} · {itemLabel(item.status)}
+                  </AppText>
+                </View>
+                {item.status === 'delivered' && (
+                  <Ionicons name="checkmark-done-circle" size={24} color={Colors.primary} />
+                )}
               </View>
 
-              {paid && !cancelled && item.status === 'ready' && (
-                <AppButton
-                  title={t('admin.markDelivered')}
-                  icon="checkmark-done"
-                  onPress={() => onDeliver(item)}
-                  disabled={deliver.isPending}
-                  style={styles.smallBtn}
-                />
-              )}
-              {paid && !cancelled && (item.status === 'pending' || item.status === 'in_progress') && (
-                <AppText variant="small" color={Colors.wood}>
-                  {t('admin.waitingSeller')}
-                </AppText>
-              )}
-              {item.status === 'delivered' && (
-                <Ionicons name="checkmark-done-circle" size={24} color={Colors.primary} />
-              )}
+              <DeliveryProofs proofs={item.delivery_proofs} size={72} />
+              {renderItemAction(item)}
             </View>
           ))}
         </View>
 
-        {!cancelled && order.status !== 'delivered' && (
+        {canCancel && (
           <AppButton
             title={t('admin.cancelOrder')}
             variant="ghost"
@@ -214,12 +269,20 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', gap: Spacing.sm },
   btn: { flex: 1, height: 46 },
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: Spacing.sm,
     paddingVertical: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
   },
-  smallBtn: { height: 36, paddingHorizontal: Spacing.md },
+  itemRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  deliverBtn: { height: 42 },
+  notice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.sm,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    backgroundColor: Colors.white,
+  },
 });

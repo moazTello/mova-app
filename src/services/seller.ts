@@ -27,8 +27,12 @@ export type SellerInfoPayload = {
 };
 
 export const sellerService = {
-  /** isUpdate: إذا عنده بيانات من قبل (مرفوض وعم يعدّل) */
-  submitInfo: async (payload: SellerInfoPayload, isUpdate: boolean) => {
+  /**
+   * approvedEdit: تاجر مقبول عم يعدّل بيانات متجره → PATCH /seller/profile
+   * غير هيك (أول مرة أو مرفوض وعم يعيد الإرسال) → POST /seller/info
+   * (ما في route PATCH على /seller/info، فـ _method=PATCH هناك كان يرجع 405)
+   */
+  submitInfo: async (payload: SellerInfoPayload, approvedEdit: boolean) => {
     const form = new FormData();
     form.append("shop_name", payload.shop_name);
     form.append("major", payload.major);
@@ -41,9 +45,9 @@ export const sellerService = {
       form.append("id_back_image", fileFromUri(payload.id_back_image));
 
     // PHP ما بيقرا الملفات مع PATCH، فمنبعت POST ومنقول لـ Laravel إنو PATCH
-    if (isUpdate) form.append("_method", "PATCH");
+    if (approvedEdit) form.append("_method", "PATCH");
 
-    const { data } = await api.post("/seller/info", form, {
+    const { data } = await api.post(approvedEdit ? "/seller/profile" : "/seller/info", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;

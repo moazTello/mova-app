@@ -140,7 +140,8 @@
     "address": "Delivery address",
     "cancel": "Cancel order",
     "cancelConfirm": "Are you sure you want to cancel this order?",
-    "details": "Order details"
+    "details": "Order details",
+    "deliveryProofs": "Delivery proof photos"
   },
   "account": {
     "title": "Account",
@@ -281,7 +282,9 @@
     "markReady": "Mark as ready",
     "uploadProof": "Upload delivery proof",
     "proofUploaded": "Proof uploaded",
-    "confirmReady": "Is this item ready for delivery?"
+    "confirmReady": "Is this item ready for delivery?",
+    "awaitingAdmin": "Proof uploaded — waiting for admin to confirm delivery",
+    "addMoreProof": "Add more photos"
   },
   "dashboard": {
     "hello": "Hello, {{name}}",
@@ -375,7 +378,10 @@
     "rangeMonth": "This month",
     "range30": "Last 30 days",
     "rangeYear": "This year",
-    "noReportData": "No data for this period"
+    "noReportData": "No data for this period",
+    "waitingProof": "Item is ready — waiting for the seller to upload delivery proof",
+    "proofsHint": "The seller uploaded delivery proof. Review the photos under each item, then tap \"Delivered\"",
+    "filterProofs": "Proofs to confirm"
   },
   "reviews": {
     "title": "Reviews",
@@ -395,12 +401,12 @@
   },
   "forgot": {
     "title": "Reset password",
-    "phoneSubtitle": "Enter your registered phone number and we'll send you a code via WhatsApp",
+    "phoneSubtitle": "Enter your account email and we'll send a code via WhatsApp to your verified number",
     "send": "Send code",
-    "resetSubtitle": "Enter the code sent to {{phone}} and your new password",
+    "resetSubtitle": "Enter the code sent via WhatsApp to the number linked to {{email}} and your new password",
     "reset": "Change password",
     "success": "Password changed. You can sign in now",
-    "changePhone": "Change number"
+    "changePhone": "Change email"
   },
   "support": {
     "title": "Help & support",

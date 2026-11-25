@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import { BottomSheet } from '@/components/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
 import { AppButton } from '@/components/AppButton';
@@ -56,60 +56,46 @@ export function ReviewModal({ productId, visible, existing, onClose }: Props) {
     ]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        <View style={styles.sheet}>
-          <AppText variant="h3" center>
-            {existing ? t('reviews.edit') : t('reviews.write')}
+    <BottomSheet visible={visible} onClose={onClose}>
+      <AppText variant="h3" center>
+        {existing ? t('reviews.edit') : t('reviews.write')}
+      </AppText>
+
+      <View style={{ alignItems: 'center', gap: Spacing.xs }}>
+        <StarRating value={stars} size={36} onChange={setStars} />
+        {stars === 0 && (
+          <AppText variant="small" color={Colors.textMuted}>
+            {t('reviews.chooseStars')}
           </AppText>
+        )}
+      </View>
 
-          <View style={{ alignItems: 'center', gap: Spacing.xs }}>
-            <StarRating value={stars} size={36} onChange={setStars} />
-            {stars === 0 && (
-              <AppText variant="small" color={Colors.textMuted}>
-                {t('reviews.chooseStars')}
-              </AppText>
-            )}
-          </View>
+      <TextInput
+        value={review}
+        onChangeText={setReview}
+        placeholder={t('reviews.placeholder')}
+        placeholderTextColor={Colors.textMuted}
+        multiline
+        maxLength={500}
+        style={[styles.input, { fontFamily: Fonts[i18n.language === 'ar' ? 'ar' : 'en'].regular }]}
+      />
 
-          <TextInput
-            value={review}
-            onChangeText={setReview}
-            placeholder={t('reviews.placeholder')}
-            placeholderTextColor={Colors.textMuted}
-            multiline
-            maxLength={500}
-            style={[styles.input, { fontFamily: Fonts[i18n.language === 'ar' ? 'ar' : 'en'].regular }]}
-          />
+      <AppButton title={t('reviews.submit')} onPress={onSubmit} loading={rate.isPending} disabled={stars === 0} />
 
-          <AppButton title={t('reviews.submit')} onPress={onSubmit} loading={rate.isPending} disabled={stars === 0} />
-
-          {existing && (
-            <AppButton
-              title={t('reviews.delete')}
-              variant="ghost"
-              textColor={Colors.danger}
-              loading={remove.isPending}
-              onPress={onDelete}
-            />
-          )}
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      {existing && (
+        <AppButton
+          title={t('reviews.delete')}
+          variant="ghost"
+          textColor={Colors.danger}
+          loading={remove.isPending}
+          onPress={onDelete}
+        />
+      )}
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
-  sheet: {
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.md,
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-  },
   input: {
     minHeight: 100,
     padding: Spacing.md,

@@ -8,13 +8,15 @@ import { ErrorState } from '@/components/ErrorState';
 import { OrderRow } from '@/components/orders/OrderRow';
 import { useAdminOrders } from '@/hooks/useAdmin';
 import { AdminOrder } from '@/types/admin';
-import { isCancelled } from '@/utils/order';
+import { awaitsDeliveryConfirm, awaitsReceiptReview, isCancelled } from '@/utils/order';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 
-type Filter = 'review' | 'active' | 'delivered' | 'cancelled' | 'all';
+type Filter = 'review' | 'proofs' | 'active' | 'delivered' | 'cancelled' | 'all';
 
 const FILTERS: { key: Filter; label: string }[] = [
   { key: 'review', label: 'admin.filterReview' },
+  { key: 'proofs', label: 'admin.filterProofs' },
   { key: 'active', label: 'admin.filterActive' },
   { key: 'delivered', label: 'admin.filterDelivered' },
   { key: 'cancelled', label: 'admin.filterCancelled' },
@@ -25,10 +27,13 @@ function matches(o: AdminOrder, f: Filter) {
   const cancelled = isCancelled(o.status);
   const delivered = o.status === 'delivered';
   switch (f) {
+    // receipt_status افتراضياً "pending" حتى بدون إيصال، فمنعتمد على status
     case 'review':
-      return !cancelled && o.receipt_status === 'pending';
+      return awaitsReceiptReview(o);
+    case 'proofs':
+      return awaitsDeliveryConfirm(o);
     case 'active':
-      return !cancelled && !delivered && o.receipt_status === 'approved';
+      return o.status === 'payment_approved';
     case 'delivered':
       return delivered;
     case 'cancelled':
@@ -46,7 +51,14 @@ export default function AdminOrders() {
 
   const all = useMemo(() => data?.pages.flatMap((p) => p.orders) ?? [], [data]);
   const orders = useMemo(() => all.filter((o) => matches(o, filter)), [all, filter]);
-  const reviewCount = useMemo(() => all.filter((o) => matches(o, 'review')).length, [all]);
+  const insets = useSafeAreaInsets();
+  const counts = useMemo(
+    () => ({
+      review: all.filter((o) => matches(o, 'review')).length,
+      proofs: all.filter((o) => matches(o, 'proofs')).length,
+    }),
+    [all]
+  );
 
   return (
     <View style={styles.screen}>
@@ -59,7 +71,7 @@ export default function AdminOrders() {
             <Pressable key={f.key} onPress={() => setFilter(f.key)} style={[styles.chip, active && styles.chipActive]}>
               <AppText variant="caption" color={active ? Colors.background : Colors.text}>
                 {t(f.label)}
-                {f.key === 'review' && reviewCount > 0 ? ` (${reviewCount})` : ''}
+                {(f.key === 'review' || f.key === 'proofs') && counts[f.key] > 0 ? ` (${counts[f.key]})` : ''}
               </AppText>
             </Pressable>
           );
@@ -74,7 +86,7 @@ export default function AdminOrders() {
         <FlatList
           data={orders}
           keyExtractor={(o) => o.id}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + Spacing.lg }]}
           onRefresh={refetch}
           refreshing={isRefetching}
           onEndReached={() => hasNextPage && fetchNextPage()}

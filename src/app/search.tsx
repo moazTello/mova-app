@@ -21,10 +21,12 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
 import { Product } from '@/types/product';
 import { Colors, Fonts, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 const GAP = Spacing.md;
 
 export default function Search() {
+  const bottomPad = useBottomPad();
   const { t, i18n } = useTranslation();
   const { width } = useWindowDimensions();
   const lang = i18n.language === 'ar' ? 'ar' : 'en';
@@ -83,7 +85,7 @@ export default function Search() {
             numColumns={2}
             keyExtractor={(p) => p.id}
             columnWrapperStyle={{ gap: GAP }}
-            contentContainerStyle={styles.list}
+            contentContainerStyle={[styles.list, bottomPad]}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             ListHeaderComponent={
@@ -105,7 +107,7 @@ export default function Search() {
         )
       ) : (
         // قبل البحث
-        <ScrollView contentContainerStyle={styles.list} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+        <ScrollView contentContainerStyle={[styles.list, bottomPad]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           {recent.items.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>

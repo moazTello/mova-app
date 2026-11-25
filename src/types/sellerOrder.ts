@@ -1,4 +1,6 @@
-export type SellerItemStatus = 'pending' | 'in_progress' | 'ready' | 'delivered' | string;
+import { DeliveryProof } from './order';
+
+export type SellerItemStatus = 'pending' | 'in_progress' | 'ready' | 'delivered' | (string & {});
 
 export type SellerOrderItem = {
   id: string;
@@ -9,6 +11,7 @@ export type SellerOrderItem = {
   seller_payout_amount?: string;
   payout_status?: string;
   product: { id: string; name: string; image?: string | null };
+  delivery_proofs?: DeliveryProof[];
   order_id?: string;
   order?: {
     id: string;

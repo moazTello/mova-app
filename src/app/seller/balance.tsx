@@ -10,9 +10,11 @@ import { formatPrice } from '@/utils/product';
 import { formatDate } from '@/utils/order';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { TransactionRow } from '@/components/seller/TransactionRow';
+import { useBottomPad } from '@/hooks/useBottomPad';
 // 
 
 export default function SellerBalance() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const { data, isLoading, isError, error, refetch, isRefetching } = useSellerBalance();
 
@@ -28,7 +30,7 @@ export default function SellerBalance() {
         <FlatList
           data={data?.transactions}
           keyExtractor={(tx) => tx.id}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, bottomPad]}
           onRefresh={refetch}
           refreshing={isRefetching}
           ListHeaderComponent={

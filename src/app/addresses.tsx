@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { Alert, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomSheet } from '@/components/BottomSheet';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
@@ -13,6 +14,7 @@ import { Colors, Radius, Spacing } from '@/constants/theme';
 export default function Addresses() {
   const { t } = useTranslation();
   const { items, add, update, remove } = useAddresses();
+  const insets = useSafeAreaInsets();
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Address | null>(null);
@@ -45,7 +47,7 @@ export default function Addresses() {
       <FlatList
         data={items}
         keyExtractor={(a) => a.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + Spacing.lg }]}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Ionicons name="location-outline" size={22} color={Colors.wood} />
@@ -73,25 +75,20 @@ export default function Addresses() {
         }
       />
 
-      <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
-        <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
-          <Pressable style={StyleSheet.absoluteFill} onPress={() => setOpen(false)} />
-          <View style={styles.sheet}>
-            <AppText variant="h3" center>
-              {editing ? t('addresses.edit') : t('addresses.add')}
-            </AppText>
-            <AppInput icon="bookmark-outline" placeholder={t('addresses.label')} value={label} onChangeText={setLabel} />
-            <AppInput
-              icon="location-outline"
-              placeholder={t('addresses.details')}
-              value={details}
-              onChangeText={setDetails}
-              multiline
-            />
-            <AppButton title={t('admin.save')} onPress={onSave} disabled={!details.trim()} />
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+      <BottomSheet visible={open} onClose={() => setOpen(false)}>
+        <AppText variant="h3" center>
+          {editing ? t('addresses.edit') : t('addresses.add')}
+        </AppText>
+        <AppInput icon="bookmark-outline" placeholder={t('addresses.label')} value={label} onChangeText={setLabel} />
+        <AppInput
+          icon="location-outline"
+          placeholder={t('addresses.details')}
+          value={details}
+          onChangeText={setDetails}
+          multiline
+        />
+        <AppButton title={t('admin.save')} onPress={onSave} disabled={!details.trim()} />
+      </BottomSheet>
     </View>
   );
 }
@@ -110,13 +107,4 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   action: { padding: 4 },
-  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
-  sheet: {
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.md,
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-  },
 });

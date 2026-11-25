@@ -37,7 +37,7 @@ export function AccountScreen({ topItems, subtitle }: Props) {
     ]);
 
   return (
-    <Screen>
+    <Screen inTabs>
       <AppText variant="h2" center style={{ marginBottom: Spacing.lg }}>
         {t("account.title")}
       </AppText>

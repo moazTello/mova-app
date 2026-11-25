@@ -25,7 +25,7 @@ export default function Home() {
   };
 
   return (
-    <Screen refreshing={refreshing} onRefresh={onRefresh}>
+    <Screen inTabs refreshing={refreshing} onRefresh={onRefresh}>
       <HomeHeader />
       <SearchBar onPress={() => router.push("/search")} />
       <PromoBanner />

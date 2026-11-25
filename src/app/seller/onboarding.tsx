@@ -24,7 +24,6 @@ export default function SellerOnboarding() {
 
   // إذا عنده بيانات من قبل (مرفوض)، منعبّي النموذج فيها
   const existing = user?.seller_info;
-  const isUpdate = !!existing;
 
   const { mode } = useLocalSearchParams<{ mode?: string }>();
   // وضع التعديل: تاجر مقبول جاي من حسابي
@@ -68,7 +67,7 @@ export default function SellerOnboarding() {
           id_front_image: frontNew,
           id_back_image: backNew,
         },
-        isUpdate,
+        existing?.approval_status === "approved",
       );
       const updated = await refreshUser();
       // if (updated) router.replace(homeFor(updated));
@@ -102,7 +101,10 @@ export default function SellerOnboarding() {
 
     <KeyboardAwareScrollView
         bottomOffset={Spacing.xl}
-      contentContainerStyle={[styles.content, { paddingTop: isEdit ? 0 : insets.top + Spacing.lg }]}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: isEdit ? 0 : insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.xl },
+      ]}
       keyboardShouldPersistTaps="handled"
     >
       {isEdit ? (

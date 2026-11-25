@@ -12,9 +12,11 @@ import { Category } from '@/types/category';
 import { categoryIcon } from '@/utils/category';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AdminCategories() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { data, isLoading, isError, error, refetch, isRefetching } = useCategories();
   const create = useCreateCategory();
   const update = useUpdateCategory();
@@ -52,7 +54,7 @@ export default function AdminCategories() {
         <FlatList
           data={data}
           keyExtractor={(c) => c.id}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 100 }]}
           onRefresh={refetch}
           refreshing={isRefetching}
           renderItem={({ item }) => (
@@ -81,7 +83,8 @@ export default function AdminCategories() {
         />
       )}
 
-      <Pressable style={styles.fab} onPress={() => setModalOpen(true)}>
+      {/* الزر العائم فوق أزرار نظام أندرويد */}
+      <Pressable style={[styles.fab, { bottom: insets.bottom + Spacing.lg }]} onPress={() => setModalOpen(true)}>
         <Ionicons name="add" size={28} color={Colors.background} />
       </Pressable>
 
@@ -98,7 +101,7 @@ export default function AdminCategories() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: Colors.background },
-  list: { padding: Spacing.md, paddingBottom: 100, gap: Spacing.sm },
+  list: { padding: Spacing.md, gap: Spacing.sm },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -120,7 +123,6 @@ const styles = StyleSheet.create({
   action: { padding: 4 },
   fab: {
     position: 'absolute',
-    bottom: Spacing.xl,
     end: Spacing.lg,
     width: 56,
     height: 56,

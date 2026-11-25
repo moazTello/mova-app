@@ -10,14 +10,13 @@ import { OtpInput } from '@/components/OtpInput';
 import { authService } from '@/services/auth';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Spacing } from '@/constants/theme';
-import { PhoneInput } from '@/components/PhoneInput';
 const RESEND_SECONDS = 60;
 
 export default function ForgotPassword() {
   const { t } = useTranslation();
   const [step, setStep] = useState<'phone' | 'reset'>('phone');
 
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -42,7 +41,7 @@ export default function ForgotPassword() {
     setErrors({});
     setLoading(true);
     try {
-      await authService.forgotPassword(phone.trim());
+      await authService.forgotPassword(email.trim());
       setStep('reset');
       setSeconds(RESEND_SECONDS);
     } catch (e) {
@@ -57,7 +56,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await authService.resetPassword({
-        phone_number: phone.trim(),
+        email: email.trim(),
         otp,
         password,
         password_confirmation: confirm,
@@ -74,17 +73,17 @@ export default function ForgotPassword() {
     return (
       <AuthScreen title={t('forgot.title')} subtitle={t('forgot.phoneSubtitle')}>
         <View style={styles.form}>
-          {/* <AppInput
-            icon="call-outline"
-            placeholder="+963 9XX XXX XXX"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-            autoComplete="tel"
-            error={errors.phone_number}
-          /> */}
-          <PhoneInput value={phone} onChange={setPhone} error={errors.phone_number} />
-          <AppButton title={t('forgot.send')} onPress={sendCode} loading={loading} disabled={!phone.trim()} />
+          <AppInput
+            icon="mail-outline"
+            placeholder={t('auth.email')}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            error={errors.email}
+          />
+          <AppButton title={t('forgot.send')} onPress={sendCode} loading={loading} disabled={!email.trim()} />
         </View>
         <BackToLogin />
       </AuthScreen>
@@ -92,12 +91,12 @@ export default function ForgotPassword() {
   }
 
   return (
-    <AuthScreen title={t('forgot.title')} subtitle={t('forgot.resetSubtitle', { phone })}>
+    <AuthScreen title={t('forgot.title')} subtitle={t('forgot.resetSubtitle', { email })}>
       <View style={styles.form}>
         <OtpInput value={otp} onChange={setOtp} />
-        {!!errors.otp && (
+        {!!(errors.otp || errors.email) && (
           <AppText variant="caption" color={Colors.danger} center>
-            {errors.otp}
+            {errors.otp ?? errors.email}
           </AppText>
         )}
 

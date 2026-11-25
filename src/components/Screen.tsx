@@ -10,6 +10,8 @@ type Props = {
   contentStyle?: StyleProp<ViewStyle>;
   refreshing?: boolean;
   onRefresh?: () => void;
+  /** الشاشة جوّا تابات: شريط التابات أصلاً بياخد مسافة أزرار النظام */
+  inTabs?: boolean;
 };
 
 export function Screen({
@@ -18,13 +20,15 @@ export function Screen({
   contentStyle,
   onRefresh,
   refreshing,
+  inTabs = false,
 }: Props) {
   const insets = useSafeAreaInsets();
   const style = [
     {
       paddingTop: insets.top + Spacing.sm,
       paddingHorizontal: Spacing.md,
-      paddingBottom: Spacing.lg,
+      // أندرويد edge-to-edge: المحتوى بيوصل لتحت أزرار النظام إذا ما زدنا المسافة
+      paddingBottom: (inTabs ? 0 : insets.bottom) + Spacing.lg,
     },
     contentStyle,
   ];

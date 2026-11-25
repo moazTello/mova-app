@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { BottomSheet } from '@/components/BottomSheet';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
@@ -10,10 +10,26 @@ import { Category } from '@/types/category';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 
 const ICONS = [
-  'bed-outline', 'home-outline', 'restaurant-outline', 'cafe-outline', 'tv-outline',
-  'desktop-outline', 'library-outline', 'bulb-outline', 'flower-outline', 'leaf-outline',
-  'water-outline', 'color-palette-outline', 'images-outline', 'happy-outline', 'briefcase-outline',
-  'car-outline', 'sunny-outline', 'grid-outline', 'cube-outline', 'gift-outline',
+  'bed-outline',
+  'home-outline',
+  'restaurant-outline',
+  'cafe-outline',
+  'tv-outline',
+  'desktop-outline',
+  'library-outline',
+  'bulb-outline',
+  'flower-outline',
+  'leaf-outline',
+  'water-outline',
+  'color-palette-outline',
+  'images-outline',
+  'happy-outline',
+  'briefcase-outline',
+  'car-outline',
+  'sunny-outline',
+  'grid-outline',
+  'cube-outline',
+  'gift-outline',
 ] as const;
 
 type Props = {
@@ -37,52 +53,38 @@ export function CategoryFormModal({ visible, category, loading, onClose, onSubmi
   }, [visible, category]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        <View style={styles.sheet}>
-          <AppText variant="h3" center>
-            {category ? t('admin.editCategory') : t('admin.addCategory')}
-          </AppText>
+    <BottomSheet visible={visible} onClose={onClose}>
+      <AppText variant="h3" center>
+        {category ? t('admin.editCategory') : t('admin.addCategory')}
+      </AppText>
 
-          <AppInput placeholder={t('admin.categoryName')} value={name} onChangeText={setName} />
+      <AppInput placeholder={t('admin.categoryName')} value={name} onChangeText={setName} />
 
-          <AppText variant="caption" weight="medium">
-            {t('admin.chooseIcon')}
-          </AppText>
-          <ScrollView contentContainerStyle={styles.icons} style={{ maxHeight: 220 }}>
-            {ICONS.map((name) => {
-              const active = name === icon;
-              return (
-                <Pressable key={name} onPress={() => setIcon(name)} style={[styles.iconBox, active && styles.iconActive]}>
-                  <Ionicons name={name} size={24} color={active ? Colors.background : Colors.primary} />
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+      <AppText variant="caption" weight="medium">
+        {t('admin.chooseIcon')}
+      </AppText>
+      <ScrollView contentContainerStyle={styles.icons} style={{ maxHeight: 220 }}>
+        {ICONS.map((name) => {
+          const active = name === icon;
+          return (
+            <Pressable key={name} onPress={() => setIcon(name)} style={[styles.iconBox, active && styles.iconActive]}>
+              <Ionicons name={name} size={24} color={active ? Colors.background : Colors.primary} />
+            </Pressable>
+          );
+        })}
+      </ScrollView>
 
-          <AppButton
-            title={t('admin.save')}
-            loading={loading}
-            disabled={!name.trim()}
-            onPress={() => onSubmit({ name: name.trim(), icon })}
-          />
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      <AppButton
+        title={t('admin.save')}
+        loading={loading}
+        disabled={!name.trim()}
+        onPress={() => onSubmit({ name: name.trim(), icon })}
+      />
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
-  sheet: {
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.md,
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-  },
   icons: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   iconBox: {
     width: 52,

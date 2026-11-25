@@ -42,7 +42,7 @@ export default function SellerDashboard() {
   const hidden = products.data?.filter((p) => !p.is_active).length ?? 0;
 
   return (
-    <Screen refreshing={refreshing} onRefresh={onRefresh}>
+    <Screen inTabs refreshing={refreshing} onRefresh={onRefresh}>
       <AppText variant="h2">{t('dashboard.hello', { name: user?.name ?? '' })}</AppText>
       <AppText variant="caption" color={Colors.textMuted} style={{ marginBottom: Spacing.md }}>
         {user?.seller_info?.shop_name}

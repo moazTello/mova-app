@@ -41,6 +41,7 @@ export function CartItemRow({ item }: { item: CartItem }) {
 
         <QuantityStepper
           value={item.quantity}
+          max={item.product.stock ? Math.max(item.product.stock, 1) : undefined}
           onChange={(quantity) =>
             update.mutate({ itemId: item.id, quantity }, { onError })
           }

@@ -10,6 +10,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { ProductFilters } from '@/services/products';
 import { Product } from '@/types/product';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 type Sort = 'newest' | 'priceLow' | 'priceHigh' | 'topRated';
 const SORTS: Sort[] = ['newest', 'priceLow', 'priceHigh', 'topRated'];
@@ -36,6 +37,7 @@ type Props = {
 };
 
 export function ProductGridScreen({ title, filters = {}, emptyText }: Props) {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const [sort, setSort] = useState<Sort>('newest');
@@ -76,7 +78,7 @@ export function ProductGridScreen({ title, filters = {}, emptyText }: Props) {
           numColumns={2}
           keyExtractor={(p) => p.id}
           columnWrapperStyle={{ gap: GAP }}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, bottomPad]}
           onRefresh={refetch}
           refreshing={isRefetching}
           ListHeaderComponent={

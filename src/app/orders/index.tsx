@@ -9,6 +9,7 @@ import { useOrders } from '@/hooks/useOrders';
 import { Order } from '@/types/order';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { isCancelled } from '@/utils/order';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 type Filter = 'all' | 'active' | 'delivered';
 
@@ -20,6 +21,7 @@ function matches(order: Order, filter: Filter) {
 }
 
 export default function Orders() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const [filter, setFilter] = useState<Filter>('all');
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
@@ -61,7 +63,7 @@ export default function Orders() {
               onPress={() => router.push({ pathname: '/orders/[id]', params: { id: item.id } })}
             />
           )}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, bottomPad]}
           onEndReached={() => hasNextPage && fetchNextPage()}
           onEndReachedThreshold={0.3}
           onRefresh={refetch}

@@ -7,6 +7,7 @@ import { ErrorState } from '@/components/ErrorState';
 import { useFinancialReport } from '@/hooks/useAdmin';
 import { formatPrice } from '@/utils/product';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 type Range = 'month' | '30' | 'year';
 
@@ -62,6 +63,7 @@ function Section({ data }: { data: Record<string, any> }) {
 }
 
 export default function AdminReports() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const [range, setRange] = useState<Range>('month');
   const { from, to } = useMemo(() => rangeDates(range), [range]);
@@ -99,7 +101,7 @@ export default function AdminReports() {
         <ErrorState error={error} onRetry={refetch} />
       ) : (
         <ScrollView
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content, bottomPad]}
           refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
         >
           {data && Object.keys(data).length ? (

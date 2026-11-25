@@ -3,7 +3,10 @@ import { ProductOption } from './product';
 export type CartProduct = {
   id: string;
   name: string;
+  /** سعر الزبون (مع هامش المنصة) */
   price: string | number;
+  stock?: number;
+  is_active?: boolean;
   image: string | null;
 };
 

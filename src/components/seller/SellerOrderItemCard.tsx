@@ -1,5 +1,6 @@
 import { AppButton } from "@/components/AppButton";
 import { AppText } from "@/components/AppText";
+import { DeliveryProofs } from "@/components/orders/DeliveryProofs";
 import { Colors, Radius, Spacing } from "@/constants/theme";
 import { useUpdateItemStatus, useUploadProof } from "@/hooks/useSellerOrders";
 import { itemOrderId, SellerOrderItem } from "@/types/sellerOrder";
@@ -10,6 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import { Alert, Image, StyleSheet, View } from "react-native";
+
+/** نفس الحد يلي بالباك إند */
+const MAX_PROOFS = 5;
 
 const STATUS_COLOR: Record<string, string> = {
   pending: Colors.gold,
@@ -28,6 +32,8 @@ export function SellerOrderItemCard({ item }: { item: SellerOrderItem }) {
     ? t(`itemStatus.${item.status}`)
     : item.status;
   const earning = item.seller_payout_amount ?? item.subtotal;
+  const proofsCount = item.delivery_proofs?.length ?? 0;
+  const remaining = MAX_PROOFS - proofsCount;
 
   const onPickProof = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,13 +42,13 @@ export function SellerOrderItemCard({ item }: { item: SellerOrderItem }) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
-      selectionLimit: 5,
+      selectionLimit: remaining,
       quality: 0.7,
     });
     if (result.canceled) return;
 
     uploadProof.mutate(
-      { item, uris: result.assets.map((a) => a.uri) },
+      { item, uris: result.assets.slice(0, remaining).map((a) => a.uri) },
       {
         onSuccess: () => Alert.alert(t("sellerOrders.proofUploaded")),
         onError,
@@ -147,11 +153,24 @@ export function SellerOrderItemCard({ item }: { item: SellerOrderItem }) {
           style={styles.action}
         />
       )}
-      {item.status === "ready" && (
+      {(item.status === "ready" || item.status === "delivered") && (
+        <DeliveryProofs proofs={item.delivery_proofs} />
+      )}
+
+      {item.status === "ready" && proofsCount > 0 && (
+        <View style={styles.notice}>
+          <Ionicons name="hourglass-outline" size={16} color={Colors.wood} />
+          <AppText variant="caption" color={Colors.wood} style={{ flex: 1 }}>
+            {t("sellerOrders.awaitingAdmin")}
+          </AppText>
+        </View>
+      )}
+
+      {item.status === "ready" && remaining > 0 && (
         <AppButton
-          title={t("sellerOrders.uploadProof")}
+          title={proofsCount > 0 ? t("sellerOrders.addMoreProof") : t("sellerOrders.uploadProof")}
           icon="camera-outline"
-          variant="outline"
+          variant={proofsCount > 0 ? "ghost" : "outline"}
           loading={uploadProof.isPending}
           onPress={onPickProof}
           style={styles.action}
@@ -193,4 +212,12 @@ const styles = StyleSheet.create({
   image: { width: "100%", height: "100%" },
   row: { flexDirection: "row", alignItems: "flex-start", gap: 4 },
   action: { height: 44, marginTop: Spacing.xs },
+  notice: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    padding: Spacing.sm,
+    borderRadius: Radius.sm,
+    backgroundColor: Colors.background,
+  },
 });

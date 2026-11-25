@@ -10,10 +10,12 @@ import { useMarkup, useUpdateMarkup } from '@/hooks/useAdmin';
 import { formatPrice } from '@/utils/product';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 const EXAMPLE_PRICE = 1000;
 
 export default function AdminMarkup() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const { data, isLoading } = useMarkup();
   const update = useUpdateMarkup();
@@ -41,7 +43,7 @@ export default function AdminMarkup() {
       ) : (
         <KeyboardAwareScrollView
           bottomOffset={Spacing.xl}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content, bottomPad]}
           keyboardShouldPersistTaps="handled"
         >
           <AppText variant="h3">{t('admin.markupTitle')}</AppText>

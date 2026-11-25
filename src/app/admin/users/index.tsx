@@ -12,6 +12,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { UserFilters } from '@/services/admin';
 import { UserRole } from '@/types/user';
 import { Colors, Fonts, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 const ROLES: { key?: UserRole; label: string }[] = [
   { key: undefined, label: 'admin.roleAll' },
@@ -21,6 +22,7 @@ const ROLES: { key?: UserRole; label: string }[] = [
 ];
 
 export default function AdminUsers() {
+  const bottomPad = useBottomPad();
   const { t, i18n } = useTranslation();
   const [search, setSearch] = useState('');
   const [role, setRole] = useState<UserRole>();
@@ -79,7 +81,7 @@ export default function AdminUsers() {
         <FlatList
           data={users}
           keyExtractor={(u) => u.id}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, bottomPad]}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           onRefresh={refetch}

@@ -9,8 +9,10 @@ import { BackHeader } from '@/components/BackHeader';
 import { profileService } from '@/services/profile';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 export default function ChangePassword() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const [current, setCurrent] = useState('');
   const [password, setPassword] = useState('');
@@ -41,7 +43,7 @@ export default function ChangePassword() {
     <KeyboardAwareScrollView
       bottomOffset={Spacing.xl}
       style={{ flex: 1, backgroundColor: Colors.background }}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, bottomPad]}
       keyboardShouldPersistTaps="handled"
     >
       <BackHeader title={t('profile.changePassword')} />

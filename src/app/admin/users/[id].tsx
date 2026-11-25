@@ -15,6 +15,7 @@ import { formatPrice } from '@/utils/product';
 import { formatDate } from '@/utils/order';
 import { parseApiError } from '@/utils/apiError';
 import { Colors, Fonts, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 function Line({ icon, text, color }: { icon: keyof typeof Ionicons.glyphMap; text?: string | null; color?: string }) {
   if (!text) return null;
@@ -29,6 +30,7 @@ function Line({ icon, text, color }: { icon: keyof typeof Ionicons.glyphMap; tex
 }
 
 export default function AdminUserDetails() {
+  const bottomPad = useBottomPad();
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const me = useAuthStore((s) => s.user);
@@ -78,7 +80,7 @@ export default function AdminUserDetails() {
 
       <KeyboardAwareScrollView
         bottomOffset={Spacing.xl}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, bottomPad]}
         keyboardShouldPersistTaps="handled"
         refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
       >

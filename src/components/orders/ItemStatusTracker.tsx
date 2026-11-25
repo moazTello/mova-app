@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/AppText';
+import { DeliveryProofs } from '@/components/orders/DeliveryProofs';
 import { OrderItem } from '@/types/order';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 
@@ -43,6 +44,8 @@ function ItemTrack({ item }: { item: OrderItem }) {
           );
         })}
       </View>
+
+      {item.status === 'delivered' && <DeliveryProofs proofs={item.delivery_proofs} size={56} />}
     </View>
   );
 }

@@ -8,8 +8,10 @@ import { ImageViewer } from '@/components/ImageViewer';
 import { PendingSellerCard } from '@/components/admin/PendingSellerCard';
 import { usePendingSellers } from '@/hooks/useAdmin';
 import { Colors, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 export default function AdminSellers() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
   const { data, isLoading, isError, error, refetch, isRefetching } = usePendingSellers();
   const [viewing, setViewing] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export default function AdminSellers() {
         <FlatList
           data={data}
           keyExtractor={(s) => s.userId}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[styles.list, bottomPad]}
           onRefresh={refetch}
           refreshing={isRefetching}
           renderItem={({ item }) => <PendingSellerCard seller={item} onViewImage={setViewing} />}

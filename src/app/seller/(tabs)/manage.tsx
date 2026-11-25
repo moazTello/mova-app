@@ -16,7 +16,7 @@ export default function AdminManage() {
   const go = (path: Href) => router.push(path);
 
   return (
-    <Screen>
+    <Screen inTabs>
       <AppText variant="h2" center style={{ marginBottom: Spacing.lg }}>
         {t('admin.title')}
       </AppText>

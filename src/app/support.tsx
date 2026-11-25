@@ -7,6 +7,7 @@ import { BackHeader } from '@/components/BackHeader';
 import { MenuRow } from '@/components/MenuRow';
 import { Support } from '@/constants/support';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useBottomPad } from '@/hooks/useBottomPad';
 
 const FAQ = ['1', '2', '3', '4', '5'];
 
@@ -30,13 +31,14 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 export default function SupportScreen() {
+  const bottomPad = useBottomPad();
   const { t } = useTranslation();
 
   return (
     <View style={styles.screen}>
       <BackHeader title={t('support.title')} />
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, bottomPad]}>
         <AppText variant="h3">{t('support.contact')}</AppText>
         <View style={styles.menu}>
           <MenuRow

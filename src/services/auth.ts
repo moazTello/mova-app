@@ -53,13 +53,14 @@ export const authService = {
     return (data.user ?? data.data ?? data) as User;
   },
 
-  forgotPassword: async (phone_number: string) => {
-  const { data } = await api.post('/auth/forgot-password', { phone_number });
+  // الباك إند بيحدد الحساب بالإيميل (الرقم مو unique) وبيبعت الكود عواتساب الرقم المؤكَّد
+  forgotPassword: async (email: string) => {
+  const { data } = await api.post('/auth/forgot-password', { email });
   return data;
 },
 
 resetPassword: async (payload: {
-  phone_number: string;
+  email: string;
   otp: string;
   password: string;
   password_confirmation: string;
