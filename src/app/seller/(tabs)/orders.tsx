@@ -66,7 +66,7 @@ export default function SellerOrders() {
           refreshing={isRefetching}
           ListEmptyComponent={
             <AppText color={Colors.textMuted} center style={{ marginTop: Spacing.xl }}>
-              {t('sellerOrders.empty')}
+             {t('sellerOrders.empty')}
             </AppText>
           }
         />

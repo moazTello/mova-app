@@ -1,12 +1,12 @@
-import { Text, TextProps, StyleSheet } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import {
   Colors,
   Fonts,
   FontWeight,
   Typography,
   TypographyVariant,
-} from '@/constants/theme';
+} from "@/constants/theme";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TextProps } from "react-native";
 
 type Props = TextProps & {
   variant?: TypographyVariant;
@@ -16,7 +16,7 @@ type Props = TextProps & {
 };
 
 export function AppText({
-  variant = 'body',
+  variant = "body",
   weight,
   color = Colors.text,
   center = false,
@@ -24,14 +24,17 @@ export function AppText({
   ...rest
 }: Props) {
   const { i18n } = useTranslation();
-  const lang = i18n.language === 'ar' ? 'ar' : 'en';
+  const lang = i18n.language === "ar" ? "ar" : "en";
   const { fontSize, weight: defaultWeight } = Typography[variant];
 
   return (
     <Text
+      textBreakStrategy="simple"
       style={[
         styles.base,
-        { fontSize, color, fontFamily: Fonts[lang][weight ?? defaultWeight] },
+        { fontSize, color
+          , fontFamily: Fonts[lang][weight ?? defaultWeight] 
+        },
         center && styles.center,
         style,
       ]}
@@ -41,6 +44,8 @@ export function AppText({
 }
 
 const styles = StyleSheet.create({
-  base: { textAlign: 'left' },
-  center: { textAlign: 'center' },
+  base: { textAlign: "left"
+  },
+  center: { textAlign: "center"
+   },
 });

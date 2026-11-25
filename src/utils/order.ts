@@ -30,11 +30,10 @@ export function orderStatusLabel(order: Order): {
     color: Colors.wood,
   };
 }
-/** رقم مختصر للعرض: آخر 6 أحرف */
 export function shortId(id: string) {
   return `#${id.slice(-6).toUpperCase()}`;
 }
 
 export function formatDate(date: string) {
-  return date?.split(" ")[0] ?? "";
+  return date?.split(/[T ]/)[0] ?? "";
 }
